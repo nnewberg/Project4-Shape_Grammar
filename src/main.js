@@ -3,9 +3,54 @@ const THREE = require('three'); // older modules are imported like this. You sho
 import Framework from './framework'
 import Lsystem, {linkedListToString, testLinkedList} from './lsystem.js'
 import Turtle from './turtle.js'
+import {shapeTest, subdivideX, subdivideZ, createTower} from './shapegrammar.js'
 
 var turtle;
 var lsys;
+
+function testShapes(scene){
+
+  var shape = shapeTest();
+  //scene.add(shape.mesh);
+
+  // var shape1 = subdivide(shape, 0.0);
+  // //shape1.setPosition(shape1.position.x + 1.0, shape1.position.y, shape1.position.z);
+  // scene.add(shape1.mesh);
+
+  // var shape2 = subdivide(shape, 0.0);
+  // //shape2.setPosition(shape2.position.x + 1.75, shape2.position.y, shape2.position.z);
+  // scene.add(shape2.mesh);
+
+  var shapes = subdivideX(shape, 0.1);
+  //scene.add(shapes[0].mesh);
+
+  var shape0 = subdivideZ(shapes[0], 0.1);
+  console.log(shape0);
+  scene.add(shape0[0].mesh);
+  scene.add(shape0[1].mesh);
+
+
+  //scene.add(shapes[1].mesh);
+  var tower1 = createTower(shape0[1], 0.8);
+  scene.add(tower1.mesh);
+
+  var tower2 = createTower(tower1, 0.8);
+  scene.add(tower2.mesh);
+
+
+
+  var shapes2 = subdivideX(shapes[1], 0.1);
+  scene.add(shapes2[0].mesh);
+  //scene.add(shapes2[1].mesh);
+
+
+  var shapes3 = subdivideX(shapes2[1], 0.1);
+  scene.add(shapes3[0].mesh);
+  scene.add(shapes3[1].mesh);
+
+
+
+}
 
 // called after the scene loads
 function onLoad(framework) {
@@ -14,6 +59,9 @@ function onLoad(framework) {
   var renderer = framework.renderer;
   var gui = framework.gui;
   var stats = framework.stats;
+
+  testShapes(scene);
+ 
 
   // initialize a simple box and material
   var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -31,7 +79,7 @@ function onLoad(framework) {
 
   // initialize LSystem and a Turtle to draw
   lsys = new Lsystem();
-  turtle = new Turtle(scene);
+  //turtle = new Turtle(scene);
 
   gui.add(camera, 'fov', 0, 180).onChange(function(newVal) {
     camera.updateProjectionMatrix();
@@ -42,16 +90,16 @@ function onLoad(framework) {
     doLsystem(lsys, lsys.iterations, turtle);
   });
 
-  gui.add(turtle, 'angle', 0, 180).step(1).onChange(function(newVal) {
-    clearScene(turtle);
-    turtle.clear();
-    turtle.updateAngle(newVal);
-    var result = lsys.doIterations(lsys.iterations);
-    turtle.iterations = lsys.iterations;
-    turtle.renderSymbols(result);
+  // gui.add(turtle, 'angle', 0, 180).step(1).onChange(function(newVal) {
+  //   clearScene(turtle);
+  //   turtle.clear();
+  //   turtle.updateAngle(newVal);
+  //   var result = lsys.doIterations(lsys.iterations);
+  //   turtle.iterations = lsys.iterations;
+  //   turtle.renderSymbols(result);
 
-    //doLsystem(lsys, lsys.iterations, turtle);
-  });
+  //   //doLsystem(lsys, lsys.iterations, turtle);
+  // });
 
   gui.add(lsys, 'iterations', 0, 12).step(1).onChange(function(newVal) {
     clearScene(turtle);
