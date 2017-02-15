@@ -99,12 +99,21 @@ export function createTower(shape, scale){
 	return newShape;
 }
 
+export function createTowers(shape, iterations){
+	var towers = [];
+	var currShape = shape;
+	for (var i = 0; i < iterations; i++){
+		var currShape = createTower(currShape,0.8);
+		towers.push(currShape);
+	}
+
+	return towers;
+}
+
 export function shapeTest(){
 	var shape1 = new Shape();
-	var cylGeo = new THREE.CubeGeometry(2.0, 1.0, 10.0);
-	shape1.geometry = cylGeo;
-	var shapeMesh = new THREE.Mesh(cylGeo, shape1.material);
-	shape1.mesh = shapeMesh;
+	shape1.setScale(8.0,1.0,8.0);
+
 
 	return shape1;
 }
