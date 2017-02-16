@@ -7,8 +7,8 @@ function Terrain(){
 export function generateTerrain(){
 	//cosine_interpolate(5.0,10.0,0.1);
 	var geometry = new THREE.PlaneGeometry( 20, 20, 200, 200 );
-	var material = new THREE.MeshLambertMaterial( {color: 0xdbd1b4, vertexColors: THREE.FaceColors,
-		side: THREE.DoubleSide} );
+	// var material = new THREE.MeshLambertMaterial( {color: 0xdbd1b4, vertexColors: THREE.FaceColors,
+	// 	side: THREE.DoubleSide} );
 	
 	var vertices = geometry.vertices;
 
@@ -36,19 +36,18 @@ export function generateTerrain(){
 	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
 
+	var texture = new THREE.TextureLoader().load( "images/grid.jpg" );
+	// assuming you want the texture to repeat in both directions:
+	texture.wrapS = THREE.RepeatWrapping; 
+	texture.wrapT = THREE.RepeatWrapping;
+	// how many times to repeat in each direction; the default is (1,1),
+	texture.repeat.set( 15, 15 ); 	
 
-	// //generate colors
-	// for ( var i = 0; i < geometry.faces.length; i ++ ) {
-		
-	// 	var f  = geometry.faces[ i ];
-	// 	// console.log(f);	}
-	// 	f.color.setRGB(f.normal.x,f.normal.y,f.normal.z);
-	// }
-
+	var material = new THREE.MeshLambertMaterial({ map : texture });
 
 	var plane = new THREE.Mesh( geometry, material);
 	plane.position.set(0.0,-0.5,0.0);
-	plane.rotation.x = Math.PI / 2.0;
+	plane.rotation.x = -Math.PI / 2.0;
 	//plane.scale.set(10.0,1.0,10.0);
 	return plane;
 }

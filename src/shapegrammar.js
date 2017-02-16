@@ -34,7 +34,7 @@ export function varyHeights(shapes){
 		//console.log(randScale);
 		//s.setPosition(s.position.x,s.position.y - (randScale/2.0), s.position.z);
 
-		console.log(s.scale.y);
+		//console.log(s.scale.y);
 		s.setPosition(s.position.x, -0.5 + (randScale/2.0), s.position.z);
 		s.setScale(s.scale.x, randScale, s.scale.z);
 		//console.log(s.position.y);
@@ -44,7 +44,7 @@ export function varyHeights(shapes){
 
 export function generateRules(){
 
-	return [subdivideX, subdivideZ];
+	return [subdivideX, subdivideZ, createTower];
 }
 
 export function parseShapeGrammar(shapes, rules, iterations){

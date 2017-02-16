@@ -7,10 +7,13 @@ import {Shape, shapeTest, subdivideX, subdivideZ, createTower, createTowers, par
 import {generateTerrain} from './terrain.js'
 
 var scene;
+var camera;
 var turtle;
 var lsys;
 
 function renderShapes(shapes){
+  //shapes[0].material = THREE.MeshPhongMaterial( { emissive: 0x111111, envMap: camera.renderTarget } );
+
   for (var i = 0; i < shapes.length; i++){
       scene.add(shapes[i].mesh);
   }
@@ -72,7 +75,7 @@ function testShapes(scene){
   //var parsedShapes = parseShapeGrammar(shapes, rules, 5);
 
 
-  var cityShapes = generateCitySeed(3, 4.0);
+  var cityShapes = generateCitySeed(50, 4.0);
   cityShapes = parseShapeGrammar(cityShapes, rules, 5);
   //varyHeights(cityShapes);
 
@@ -87,14 +90,27 @@ function testShapes(scene){
 // called after the scene loads
 function onLoad(framework) {
   scene = framework.scene;
-  var camera = framework.camera;
+  camera = framework.camera;
   var renderer = framework.renderer;
   var gui = framework.gui;
   var stats = framework.stats;
 
+   // set skybox
+    var loader = new THREE.CubeTextureLoader();
+    var urlPrefix = 'images/skymap/';
+
+    var skymap = new THREE.CubeTextureLoader().load([
+        urlPrefix + 'px.jpg', urlPrefix + 'nx.jpg',
+        urlPrefix + 'py.jpg', urlPrefix + 'ny.jpg',
+        urlPrefix + 'pz.jpg', urlPrefix + 'nz.jpg'
+    ] );
+
+    scene.background = skymap;
+
   scene.add(generateTerrain());
 
   testShapes(scene);
+
  
 
   // initialize a simple box and material
