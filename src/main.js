@@ -3,7 +3,7 @@ const THREE = require('three'); // older modules are imported like this. You sho
 import Framework from './framework'
 //import Lsystem, {linkedListToString, testLinkedList} from './lsystem.js'
 import Turtle from './turtle.js'
-import {shapeTest, subdivideX, subdivideZ, createTower, createTowers} from './shapegrammar.js'
+import {Shape, shapeTest, subdivideX, subdivideZ, createTower, createTowers, parseShapeGrammar, generateRules, varyHeights} from './shapegrammar.js'
 import {generateTerrain} from './terrain.js'
 
 var scene;
@@ -16,51 +16,70 @@ function renderShapes(shapes){
   }
 }
 
+function subdivide(shape){
+
+  var shapes = [];
+  var subdivisions = 1;
+
+  shapes.push(shape);
+  for (var i = 0; i < subdivisions; i++){
+    
+    for (var j = 0; j < shapes.length; j++){
+      var xShapes = subdivideX(shapes[i], 0.1);
+      console.log(xShapes);
+      shapes.concat(xShapes);
+      console.log(shapes);
+      shapes.splice(j, 1); //remove the split shape
+      console.log(shapes);
+    }
+  }
+
+  return shapes;
+
+}
+
+function generateCitySeed(numShapes, maxRadius){
+  var shapes = [];
+  for (var i = 0; i < numShapes; i++){
+    //random radius length from the center
+    var radius = Math.random() * maxRadius;
+    var randX = Math.random() * (1 - (-1)) + (-1);
+    var randZ = Math.random() * (1 - (-1)) + (-1);
+    var direction = new THREE.Vector3(randX, 0.0, randZ);
+    direction.normalize();
+    var position = direction.multiplyScalar(radius);
+    var shape = new Shape();
+    shape.setPosition(position.x,position.y,position.z);
+    shapes.push(shape);
+  }
+
+  return shapes;
+}
+
 function testShapes(scene){
 
-  var shape = shapeTest();
+  var shape1 = new Shape();
+  var shape2 = new Shape();
+  var shape3 = new Shape();
+  shape2.setPosition(-1,0,-1);
+  shape3.setPosition(1,0,1);
+  var shapes  = [shape1, shape2, shape3];
+
   //scene.add(shape.mesh);
 
-  // var shape1 = subdivide(shape, 0.0);
-  // //shape1.setPosition(shape1.position.x + 1.0, shape1.position.y, shape1.position.z);
-  // scene.add(shape1.mesh);
-
-  // var shape2 = subdivide(shape, 0.0);
-  // //shape2.setPosition(shape2.position.x + 1.75, shape2.position.y, shape2.position.z);
-  // scene.add(shape2.mesh);
-
-  var shapes = subdivideX(shape, 0.1);
-  //scene.add(shapes[0].mesh);
-
-  var shape0 = subdivideZ(shapes[0], 0.1);
-  console.log(shape0);
-  scene.add(shape0[0].mesh);
-  scene.add(shape0[1].mesh);
+  var rules = generateRules();
+  // var shapes =  rules[0](shape);
+  //var parsedShapes = parseShapeGrammar(shapes, rules, 5);
 
 
-  //scene.add(shapes[1].mesh);
-  var towers = createTowers(shape0[1], 3);
-  renderShapes(towers);
-  //renderShapes(towers);
-  // for (var i = 0; i  < towers.length; i++){
+  var cityShapes = generateCitySeed(3, 4.0);
+  cityShapes = parseShapeGrammar(cityShapes, rules, 5);
+  //varyHeights(cityShapes);
 
-  // }
-  // scene.add(tower1.mesh);
-
-  // var tower2 = createTower(tower1, 0.8);
-  // scene.add(tower2.mesh);
+  renderShapes(cityShapes);
 
 
-
-  var shapes2 = subdivideX(shapes[1], 0.1);
-  scene.add(shapes2[0].mesh);
-  //scene.add(shapes2[1].mesh);
-
-
-  var shapes3 = subdivideX(shapes2[1], 0.1);
-  scene.add(shapes3[0].mesh);
-  scene.add(shapes3[1].mesh);
-
+  //renderShapes(parsedShapes);
 
 
 }

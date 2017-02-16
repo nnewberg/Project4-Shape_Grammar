@@ -6,7 +6,7 @@ function Terrain(){
 
 export function generateTerrain(){
 	//cosine_interpolate(5.0,10.0,0.1);
-	var geometry = new THREE.PlaneGeometry( 20, 20, 20, 20 );
+	var geometry = new THREE.PlaneGeometry( 20, 20, 200, 200 );
 	var material = new THREE.MeshLambertMaterial( {color: 0xdbd1b4, vertexColors: THREE.FaceColors,
 		side: THREE.DoubleSide} );
 	
@@ -17,12 +17,19 @@ export function generateTerrain(){
 		var frequency = 0.75;
 		var centerPos = new THREE.Vector3(0.0,0.0,0.0);
 		var distance = centerPos.distanceTo(vertices[i]);
+		var offset = 0.0;
 		
-		if(distance > 5){
-			//frequency += 0.5*distance;
-			var offset = perlinNoise(vertices[i], frequency)*distance*distance/50.0;
-			vertices[i].z -= offset;
-		}
+		offset = perlinNoise(vertices[i], frequency)*distance*distance/90.0;
+
+		// if(distance > 5){
+		// 	//frequency += 0.5*distance;
+		// 	offset = perlinNoise(vertices[i], frequency)*distance*distance/50.0;
+		// }else{
+		// 	offset = perlinNoise(vertices[i], frequency)*distance*distance/50.0;
+		// }
+
+		vertices[i].z -= offset;
+
 		
 	}
 
