@@ -4,9 +4,37 @@ function Terrain(){
 	
 }
 
+export function getFlatFaces(geometry){
+
+	geometry.computeFaceNormals();
+	geometry.computeVertexNormals();
+
+	var flatFaces = [];
+	var faces = geometry.faces;
+	console.log(faces.length);
+
+	for (var i = 0; i < faces.length; i++){
+		var f = faces[i];
+		var dot = new THREE.Vector3(0.0,1.0,0.0).dot(f.normal);
+		var facePos = geometry.vertices[f.a];
+		var distance = facePos.length();
+		if(dot < 0.001 && distance > 7.0){
+			var rotatedFacePos = facePos.clone();
+			//var vector = new THREE.Vector3( 1, 0, 0 );
+			
+			var axis = new THREE.Vector3( 1, 0, 0 );
+			var angle = -(Math.PI / 2);
+			rotatedFacePos.applyAxisAngle( axis, angle );
+
+			flatFaces.push(rotatedFacePos);
+		}
+	}
+	return flatFaces;
+}
+
 export function generateTerrain(){
 	//cosine_interpolate(5.0,10.0,0.1);
-	var geometry = new THREE.PlaneGeometry( 20, 20, 200, 200 );
+	var geometry = new THREE.PlaneGeometry( 20, 20, 100, 100 );
 	// var material = new THREE.MeshLambertMaterial( {color: 0xdbd1b4, vertexColors: THREE.FaceColors,
 	// 	side: THREE.DoubleSide} );
 	
@@ -20,6 +48,8 @@ export function generateTerrain(){
 		var offset = 0.0;
 		
 		offset = perlinNoise(vertices[i], frequency)*distance*distance/90.0;
+
+
 
 		// if(distance > 5){
 		// 	//frequency += 0.5*distance;
